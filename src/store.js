@@ -10,6 +10,7 @@ export default new Vuex.Store({
 	state: {
 		weather: {},
 		isLoading: true,
+		isError: false,
 		cityName: 'Омск',
 		units: 'metric',
 		coords: null
@@ -32,9 +33,11 @@ export default new Vuex.Store({
 				}).then((response) => {
 					commit('SET_WEATHER', response.data)
 					state.isLoading = false
+					state.isError = false
 					resolve()
 				}).catch(() => {
 					state.isLoading = false
+					state.isError = true
 					resolve()
 				})
 			})
@@ -50,9 +53,11 @@ export default new Vuex.Store({
 						commit('SET_CITY_NAME', response.data.name)
 						commit('SET_WEATHER', response.data)
 						state.isLoading = false
+						state.isError = false
 						resolve()
 					}).catch(() => {
 						state.isLoading = false
+						state.isError = true
 						resolve()
 					})
 				} else {
@@ -65,8 +70,44 @@ export default new Vuex.Store({
 		getWeather: state => {
 			return state.weather
 		},
+		getAdditionalData: state => {
+			const weather = state.weather
+			const speedTime = state.units === 'metric' ? 'с' : 'ч'
+
+			const parsedArray = [
+				{
+					title: 'Ветер',
+					value: `${weather.wind.speed} м/${speedTime}, ${getCardinalDirection(weather.wind.deg)}`
+				},
+				{
+					title: 'Давление',
+					value: `${weather.main.pressure} мм рт. ст.`
+				},
+				{
+					title: 'Влажность',
+					value: `${weather.main.humidity}%`
+				},
+				{
+					title: 'Вероятность дождя',
+					value: `${weather.clouds.all}%`
+				},
+			]
+
+			function getCardinalDirection(angle) {
+				const directions = ['северный', 'северо-восточный', 'восточный', 'юго-восточный', 'южный', 'юго-западный', 'западный', 'северо-западный']
+				return directions[Math.round(angle / 45) % 8]
+			}
+
+			return parsedArray
+		},
 		getCityName: state => {
 			return state.cityName
-		}
+		},
+		loading: state => {
+			return state.isLoading
+		},
+		error: state => {
+			return state.isError
+		},
 	}
 })

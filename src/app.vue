@@ -2,28 +2,32 @@
 	<div id="app">
 		<app-header/>
 
-		<div class="weather" v-if="this.$store.state.isLoading">
-			Загрузка ...
+		<div class="error" v-if="isError">
+			<h1>
+				Ошибка =(
+			</h1>
+			<p>Попробуйте ввести другой город</p>
 		</div>
 
-		<template v-else>
-			<app-main/>
-			<app-footer/>
-		</template>
+		<div class="loader" v-if="dataLoading">
+			<h1>
+				Загрузка ...
+			</h1>
+		</div>
+
+		<app-main v-if="!isError && !dataLoading" :class="{_loading: this.$store.state.isLoading}"/>
 	</div>
 </template>
 
 <script>
 	import appHeader from './components/app-header'
 	import appMain from './components/app-main'
-	import appFooter from './components/app-footer'
 
-	import {mapActions} from 'vuex'
+	import {mapActions, mapGetters} from 'vuex'
 
 	export default {
 		name: 'app',
 		components: {
-			appFooter,
 			appHeader,
 			appMain
 		},
@@ -31,14 +35,25 @@
 			return {
 				city: {
 					name: this.$store.state.cityName
-				}
+				},
+				dataLoading: true
 			}
 		},
 		methods: {
 			...mapActions(['getWeatherByCityName']),
+			...mapGetters(['error', 'loading']),
 		},
-		mounted() {
-			this.getWeatherByCityName()
+		computed: {
+			isError() {
+				return this.error()
+			},
+			isLoading() {
+				return this.loading()
+			},
+		},
+		async mounted() {
+			await this.getWeatherByCityName()
+			this.dataLoading = false
 		}
 	}
 </script>
@@ -86,4 +101,17 @@
 		width: 100%
 		height: 100%
 		background-color: #498cec
+
+	.error
+	.loader
+		position: relative
+		display: flex
+		justify-content: center
+		align-items: center
+		flex-direction: column
+		width: 100%
+		height: 100%
+		top: 0
+		left: 0
+		font-size: 30px
 </style>
