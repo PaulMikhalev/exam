@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<app-header/>
+		<app-header :city="city"/>
 		<app-main/>
 		<app-footer/>
 	</div>
@@ -11,12 +11,27 @@
 	import appMain from './components/app-main'
 	import appFooter from './components/app-footer'
 
+	import {mapActions} from 'vuex'
+
 	export default {
 		name: 'app',
 		components: {
 			appFooter,
 			appHeader,
 			appMain
+		},
+		data() {
+			return {
+				city: {
+					name: this.$store.state.cityName
+				}
+			}
+		},
+		methods: {
+			...mapActions(['getWeatherFromCity']),
+		},
+		mounted() {
+			this.getWeatherFromCity(this.city.name)
 		}
 	}
 </script>

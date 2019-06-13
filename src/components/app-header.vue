@@ -2,24 +2,24 @@
 	<div class="app-header">
 		<div class="city">
 			<div class="city_selected">
-				<h1 class="city_selected--name">{{city}}</h1>
+				<h1 class="city_selected--name">{{city.name}}</h1>
 				<div class="city_selected--btns">
-					<button class="city_selected--change" @click.prevent="isChangeCity = true">Сменить город</button>
+					<button class="city_selected--change" @click.prevent="openInput">Сменить город</button>
 					<button class="city_selected--gps"><iconGps class="city_selected--gps-icon"/> Моё местоположение</button>
 				</div>
 			</div>
 			<div class="city_change" v-if="isChangeCity">
-				<input class="city_change--input" type="text" v-model="city"/>
-				<button class="city_change--submit" @click.prevent="isChangeCity = false">OK</button>
+				<input class="city_change--input" type="text" @keyup.enter="changeCity" v-model="city.name"/>
+				<button class="city_change--submit" @click.prevent="changeCity">OK</button>
 			</div>
 		</div>
 
 		<div class="temperature">
 			<span class="temperature_text">°</span>
 			<div class="temperature_box">
-				<label :key="unit" :class="['temperature_item', {'_selected': temperatureUnit === unit}]" v-for="unit in temperatures">
-					<span class="temperature_name">{{unit}}</span>
-					<input type="radio" name="temperature" class="temperature_unit" :value="unit" v-model="temperatureUnit">
+				<label :key="units.value" :class="['temperature_item', {'_selected': temperatureUnits.units === units.value}]" v-for="units in temperatures">
+					<span class="temperature_name">{{units.shortName}}</span>
+					<input type="radio" name="temperature" class="temperature_units" :value="units.value" v-model="temperatureUnits.units" @change="changeUnits">
 				</label>
 			</div>
 		</div>
@@ -27,16 +27,45 @@
 </template>
 
 <script>
+	import {mapActions} from 'vuex'
+
 	import iconGps from '../assets/img/gps.svg'
 
 	export default {
 		name: 'app-header',
+		props: {
+			city: Object
+		},
 		data() {
 			return {
-				temperatureUnit: 'C',
-				temperatures: ['C', 'F'],
-				city: 'Омск',
+				temperatureUnits: this.$store.state,
+				temperatures: [
+					{
+						shortName: 'C',
+						value: 'metric'
+					},
+					{
+						shortName: 'F',
+						value: 'imperial'
+					},
+				],
 				isChangeCity: false
+			}
+		},
+		methods: {
+			...mapActions(['getWeatherFromCity']),
+			openInput() {
+				this.isChangeCity = true
+			},
+			closeInput() {
+				this.isChangeCity = false
+			},
+			changeCity() {
+				this.getWeatherFromCity(this.city.name)
+				this.closeInput()
+			},
+			changeUnits() {
+				this.getWeatherFromCity()
 			}
 		},
 		components: {
@@ -132,6 +161,6 @@
 			._selected &
 				font-weight: 700
 
-		&_unit
+		&_units
 			display: none
 </style>
