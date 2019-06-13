@@ -53,6 +53,7 @@
 		},
 		async mounted() {
 			await this.getWeatherByCityName()
+
 			this.dataLoading = false
 		}
 	}
@@ -102,6 +103,9 @@
 		height: 100%
 		background-color: #498cec
 
+		@media (max-width: 670px)
+			padding: 20px 40px 40px 20px
+
 	.error
 	.loader
 		position: relative
@@ -114,4 +118,7 @@
 		top: 0
 		left: 0
 		font-size: 30px
+
+		@media (max-width: 670px)
+			font-size: 20px
 </style>

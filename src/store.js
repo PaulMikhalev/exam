@@ -8,7 +8,7 @@ const apiKey = '86215701c26c937ceabd07b643b43744'
 
 export default new Vuex.Store({
 	state: {
-		weather: {},
+		weather: null,
 		isLoading: true,
 		isError: false,
 		cityName: 'Омск',
@@ -74,24 +74,24 @@ export default new Vuex.Store({
 			const weather = state.weather
 			const speedTime = state.units === 'metric' ? 'с' : 'ч'
 
-			const parsedArray = [
+			const parsedArray = state.weather ? [
 				{
 					title: 'Ветер',
-					value: `${weather.wind.speed} м/${speedTime}, ${getCardinalDirection(weather.wind.deg)}`
+					value: `<b>${weather.wind.speed}</b> м/${speedTime}, ${getCardinalDirection(weather.wind.deg)}`
 				},
 				{
 					title: 'Давление',
-					value: `${weather.main.pressure} мм рт. ст.`
+					value: `<b>${weather.main.pressure}</b> мм рт. ст.`
 				},
 				{
 					title: 'Влажность',
-					value: `${weather.main.humidity}%`
+					value: `<b>${weather.main.humidity}%</b>`
 				},
 				{
 					title: 'Вероятность дождя',
-					value: `${weather.clouds.all}%`
+					value: `<b>${weather.clouds.all}%</b>`
 				},
-			]
+			] : []
 
 			function getCardinalDirection(angle) {
 				const directions = ['северный', 'северо-восточный', 'восточный', 'юго-восточный', 'южный', 'юго-западный', 'западный', 'северо-западный']

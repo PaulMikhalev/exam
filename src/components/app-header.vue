@@ -113,9 +113,11 @@
 	.city
 		&_selected
 			&--name
-				height: 61px
 				font-size: 50px
 				margin: 0 0 10px
+
+				@media (max-width: 670px)
+					font-size: 30px
 
 			&--btns
 				display: flex
@@ -130,11 +132,20 @@
 				font-size: 18px
 				transition: opacity .3s
 
+				&:last-child
+					margin-right: 0
+
+				@media (max-width: 670px)
+					font-size: 15px
+
 				&:hover
 					opacity: 1
 
 				&-icon
 					margin-right: 15px
+
+					@media (max-width: 670px)
+						margin-right: 10px
 
 		&_change
 			position: absolute
@@ -142,6 +153,10 @@
 			left: 0
 			/*max-width: 580px*/
 			width: 580px
+			z-index: 1
+
+			@media (max-width: 670px)
+				width: calc(100vw - 40px)
 
 			&--input
 				width: 100%
@@ -150,22 +165,37 @@
 				border-radius: 8px
 				padding: 0 32px
 				background-color: #ffffff
-				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15)
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15)
 				font-size: 30px
+
+				@media (max-width: 670px)
+					line-height: 53px
+					border-radius: 4px
+					font-size: 15px
+					padding: 0 18px
 
 			&--submit
 				position: absolute
-				right: 32px
+				right: 11px
 				top: 50%
 				transform: translateY(-50%)
 				font-size: 30px
 				color: #1086ff
 				text-transform: uppercase
 
+				@media (max-width: 670px)
+					font-size: 15px
+					padding: 7px
+
 	.temperature
 		display: inline-flex
 		font-size: 18px
 		color: rgba(#fff, .4)
+
+		@media (max-width: 670px)
+			position: absolute
+			top: 0
+			right: 0
 
 		&_text
 			font-family: 'PT Sans'

@@ -4,7 +4,7 @@
 			<div class="weather-main_box">
 				<div class="weather-main_top">
 					<div class="weather-main_icon"><component :is="parsedIconName(weather.weather[0].icon)"/></div>
-					<div class="weather-main_value">{{weather.main.temp}}°</div>
+					<div class="weather-main_value">{{weather.main.temp | toInt}}°</div>
 				</div>
 				<div class="weather-main_description">{{weather.weather[0].description}}</div>
 			</div>
@@ -12,7 +12,7 @@
 		<div class="weather-additional-data">
 			<div class="weather-additional-data_item" :key="data.title" v-for="data in additionalData">
 				<div class="weather-additional-data_title">{{data.title}}</div>
-				<div class="weather-additional-data_value">{{data.value}}</div>
+				<div class="weather-additional-data_value" v-html="data.value"></div>
 			</div>
 		</div>
 	</div>
@@ -61,6 +61,12 @@
 				}
 			}
 		},
+		filters: {
+			toInt: function (value) {
+				if (!value) return ''
+				return parseInt(value)
+			}
+		},
 		computed: {
 			weather() {
 				return this.getWeather()
@@ -99,6 +105,10 @@
 				display: flex
 				align-items: center
 
+			&_icon
+				@media (max-width: 670px)
+					transform: scale(0.72) // Костыль для свг, который нормально не скейлится
+
 			&_description
 				text-align: center
 				font-size: 25px
@@ -107,19 +117,36 @@
 				font-family: 'PT Sans'
 				font-size: 120px
 
+				@media (max-width: 670px)
+					font-size: 100px
+
 		&-additional-data
 			display: flex
 			justify-content: space-between
 
+			@media (max-width: 670px)
+				flex-wrap: wrap
+
 			&_item
-				/*margin-right: 50px*/
+				@media (max-width: 670px)
+					width: 50%
+					margin-bottom: 35px
+
+					&:nth-child(n + 3)
+						margin-bottom: 0
 
 			&_title
 				font-size: 18px
 				opacity: .6
 				margin-bottom: 10px
 
+				@media (max-width: 670px)
+					font-size: 15px
+					margin-bottom: 2px
+
 			&_value
 				font-size: 25px
-				font-weight: 700
+
+				@media (max-width: 670px)
+					font-size: 18px
 </style>
