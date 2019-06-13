@@ -2,10 +2,10 @@
 	<div class="app-header">
 		<div class="city">
 			<div class="city_selected">
-				<h1 class="city_selected--name">{{city.name}}</h1>
+				<h1 class="city_selected--name">{{cityName}}</h1>
 				<div class="city_selected--btns">
 					<button class="city_selected--change" @click.prevent="openInput">Сменить город</button>
-					<button class="city_selected--gps"><iconGps class="city_selected--gps-icon"/> Моё местоположение</button>
+					<button class="city_selected--gps" @click.prevent="getLocation"><iconGps class="city_selected--gps-icon"/> Моё местоположение</button>
 				</div>
 			</div>
 			<div class="city_change" v-if="isChangeCity">
@@ -17,9 +17,9 @@
 		<div class="temperature">
 			<span class="temperature_text">°</span>
 			<div class="temperature_box">
-				<label :key="units.value" :class="['temperature_item', {'_selected': temperatureUnits.units === units.value}]" v-for="units in temperatures">
+				<label :key="units.value" :class="['temperature_item', {'_selected': appState.units === units.value}]" v-for="units in temperatures">
 					<span class="temperature_name">{{units.shortName}}</span>
-					<input type="radio" name="temperature" class="temperature_units" :value="units.value" v-model="temperatureUnits.units" @change="changeUnits">
+					<input type="radio" name="temperature" class="temperature_units" :value="units.value" v-model="appState.units" @change="changeUnits">
 				</label>
 			</div>
 		</div>
@@ -27,18 +27,15 @@
 </template>
 
 <script>
-	import {mapActions} from 'vuex'
+	import {mapActions, mapGetters} from 'vuex'
 
 	import iconGps from '../assets/img/gps.svg'
 
 	export default {
 		name: 'app-header',
-		props: {
-			city: Object
-		},
 		data() {
 			return {
-				temperatureUnits: this.$store.state,
+				appState: this.$store.state,
 				temperatures: [
 					{
 						shortName: 'C',
@@ -49,23 +46,54 @@
 						value: 'imperial'
 					},
 				],
+				city: {
+					name: this.$store.state.cityName
+				},
+				cityNameCache: '',
 				isChangeCity: false
 			}
 		},
 		methods: {
-			...mapActions(['getWeatherFromCity']),
+			...mapActions(['getWeatherByCityName', 'getWeatherByCoords']),
+			...mapGetters(['getCityName']),
 			openInput() {
+				this.cityNameCache = this.city.name = this.$store.state.cityName
 				this.isChangeCity = true
 			},
 			closeInput() {
 				this.isChangeCity = false
 			},
 			changeCity() {
-				this.getWeatherFromCity(this.city.name)
+				if (this.city.name === '') {
+					this.city.name = this.cityNameCache
+				}
+
+				if (this.cityNameCache !== this.city.name) {
+					this.getWeatherByCityName(this.city.name)
+				}
+
 				this.closeInput()
 			},
 			changeUnits() {
-				this.getWeatherFromCity()
+				this.getWeatherByCityName()
+			},
+			getLocation() {
+				this.$getLocation()
+					.then(coordinates => {
+						this.$store.state.coords = {
+							lat: coordinates.lat,
+							lng: coordinates.lng
+						}
+
+						this.getWeatherByCoords()
+
+						this.city.name = this.getCityName()
+					});
+			}
+		},
+		computed: {
+			cityName() {
+				return this.getCityName()
 			}
 		},
 		components: {
@@ -85,6 +113,7 @@
 	.city
 		&_selected
 			&--name
+				height: 61px
 				font-size: 50px
 				margin: 0 0 10px
 
@@ -99,6 +128,10 @@
 				opacity: 0.6
 				margin-right: 30px
 				font-size: 18px
+				transition: opacity .3s
+
+				&:hover
+					opacity: 1
 
 				&-icon
 					margin-right: 15px
@@ -152,6 +185,10 @@
 			height: 30px
 			cursor: pointer
 			user-select: none
+			transition: color .3s
+
+			&:hover
+				color: #ffffff
 
 			&._selected
 				background-color: rgba(#fff, .2)

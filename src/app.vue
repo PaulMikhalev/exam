@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<app-header :city="city"/>
+		<app-header/>
 		<app-main/>
 		<app-footer/>
 	</div>
@@ -28,10 +28,10 @@
 			}
 		},
 		methods: {
-			...mapActions(['getWeatherFromCity']),
+			...mapActions(['getWeatherByCityName']),
 		},
 		mounted() {
-			this.getWeatherFromCity(this.city.name)
+			this.getWeatherByCityName()
 		}
 	}
 </script>
