@@ -1,8 +1,15 @@
 <template>
 	<div id="app">
 		<app-header/>
-		<app-main/>
-		<app-footer/>
+
+		<div class="weather" v-if="this.$store.state.isLoading">
+			Загрузка ...
+		</div>
+
+		<template v-else>
+			<app-main/>
+			<app-footer/>
+		</template>
 	</div>
 </template>
 

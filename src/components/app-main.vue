@@ -2,28 +2,61 @@
 	<div class="weather">
 		<div class="weather_box">
 			<div class="weather_top">
-				<div class="weather_icon"><iconSun/></div>
-				<div class="weather_value">{{value}}°</div>
+				<div class="weather_icon"><component :is="parsedIconName(weather.weather[0].icon)"/></div>
+				<div class="weather_value">{{weather.main.temp}}°</div>
 			</div>
-			<div class="weather_description">{{description}}</div>
+			<div class="weather_description">{{weather.weather[0].description}}</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import iconSun from '../assets/img/sun.svg'
+	import {mapGetters} from 'vuex'
+
+	// icons
+	import iconClear from '../assets/img/weatherIcons/sun.svg'
+	import iconClouds from '../assets/img/weatherIcons/cloud.svg'
+	import iconRain from '../assets/img/weatherIcons/rain.svg'
+	import iconThunderstorm from '../assets/img/weatherIcons/strom.svg'
+	import iconFewClouds from '../assets/img/weatherIcons/partly-cloudy.svg'
 
 	export default {
 		name: 'app-main',
 		components: {
-			iconSun
+			iconClear,
+			iconFewClouds,
+			iconClouds,
+			iconRain,
+			iconThunderstorm
 		},
 		data() {
 			return {
 				value: 19,
-				description: 'Солнечно'
+				description: 'Солнечно',
+				icon: 'icon-thunderstorm'
 			}
-		}
+		},
+		methods: {
+			...mapGetters(['getWeather']),
+			parsedIconName(id) {
+				const parsedId = id.slice(0, 2)
+
+				switch (parsedId) {
+					case '01': return 'iconClear'
+					case '02': return 'iconFewClouds'
+					case '03': return 'iconClouds'
+					case '09': return 'iconRain'
+					case '10': return 'iconRain'
+					case '11': return 'iconThunderstorm'
+					default: return 'iconClouds'
+				}
+			}
+		},
+		computed: {
+			weather() {
+				return this.getWeather()
+			}
+		},
 	}
 </script>
 
