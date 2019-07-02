@@ -7,6 +7,8 @@
 					<div class="weather-main_value">{{weather.main.temp | toInt}}°</div>
 				</div>
 				<div class="weather-main_description">{{weather.weather[0].description}}</div>
+				<div class="weather-main_description mt30">{{model.name}}<span v-if="model.val && model.val !== '_._' && toFloat(model.val) !== '0.0'">: {{toFloat(model.val)}}</span></div>
+				<InputForm :obj="model" />
 			</div>
 		</div>
 		<div class="weather-additional-data">
@@ -20,6 +22,7 @@
 
 <script>
 	import {mapGetters} from 'vuex'
+	import InputForm from '../modules/input.vue'
 
 	// icons
 	import iconClear from '../assets/img/weatherIcons/sun.svg'
@@ -35,13 +38,18 @@
 			iconFewClouds,
 			iconClouds,
 			iconRain,
-			iconThunderstorm
+			iconThunderstorm,
+			InputForm
 		},
 		data() {
 			return {
 				value: 19,
 				description: 'Солнечно',
 				icon: 'icon-thunderstorm',
+				model: {
+					name: 'Объём двигателя',
+					val: null
+				}
 			}
 		},
 		methods: {
@@ -59,10 +67,34 @@
 					case '11': return 'iconThunderstorm'
 					default: return 'iconClouds'
 				}
+			},
+			toFloat(value) {
+				const decimals = 1
+				const dec_point = '.'
+				const thousands_sep = ' '
+
+				let i, j, kw, kd, km, result
+
+				i = parseInt(value = (+value || 0).toFixed(decimals)) + ""
+
+				if((j = i.length) > 3) {
+					j = j % 3
+				} else {
+					j = 0
+				}
+
+				km = (j ? i.substr(0, j) + thousands_sep : "")
+				kw = i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands_sep)
+				//kd = (decimals ? dec_point + Math.abs(value - i).toFixed(decimals).slice(2) : "")
+				kd = (decimals ? dec_point + Math.abs(value - i).toFixed(decimals).replace(/-/, 0).slice(2) : "")
+
+				result = km + kw + kd
+
+				return result
 			}
 		},
 		filters: {
-			toInt: function (value) {
+			toInt: function(value) {
 				if (!value) return ''
 				return parseInt(value)
 			}
@@ -79,6 +111,9 @@
 </script>
 
 <style lang="stylus">
+	.mt30
+		margin-top: 30px
+
 	.weather
 		position: relative
 		height: 100%

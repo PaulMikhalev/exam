@@ -88,7 +88,7 @@ export default new Vuex.Store({
 					value: `<b>${weather.main.humidity}%</b>`
 				},
 				{
-					title: 'Вероятность дождя',
+					title: 'Облачность',
 					value: `<b>${weather.clouds.all}%</b>`
 				},
 			] : []
