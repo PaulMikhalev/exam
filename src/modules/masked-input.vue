@@ -1,7 +1,7 @@
 <template>
-	<div class="input" :class="{_active: obj.val}">
-		<label class="input__name">{{obj.name}}</label>
-		<masked-input class="input__item" mask="1.1" type="text" v-model="obj.val" />
+	<div class="masked-input" :class="{_active: obj.val}">
+		<label class="masked-input__name">{{obj.name}}</label>
+		<masked-input class="masked-input__item" mask="1.1" type="text" v-model="obj.val" />
 	</div>
 </template>
 
@@ -25,7 +25,7 @@
 </script>
 
 <style lang="stylus">
-	.input
+	.masked-input
 		margin-top: 20px
 		position: relative
 		width: 100%

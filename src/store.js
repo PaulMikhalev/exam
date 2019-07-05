@@ -13,7 +13,8 @@ export default new Vuex.Store({
 		isError: false,
 		cityName: 'Омск',
 		units: 'metric',
-		coords: null
+		coords: null,
+		isWeather: true
 	},
 	mutations: {
 		SET_WEATHER: (state, response) => {

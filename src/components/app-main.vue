@@ -2,13 +2,17 @@
 	<div class="weather">
 		<div class="weather-main">
 			<div class="weather-main_box">
-				<div class="weather-main_top">
-					<div class="weather-main_icon"><component :is="parsedIconName(weather.weather[0].icon)"/></div>
-					<div class="weather-main_value">{{weather.main.temp | toInt}}°</div>
-				</div>
-				<div class="weather-main_description">{{weather.weather[0].description}}</div>
-				<div class="weather-main_description mt30">{{model.name}}<span v-if="model.val && model.val !== '_._' && toFloat(model.val) !== '0.0'">: {{toFloat(model.val)}}</span></div>
-				<InputForm :obj="model" />
+				<template v-if="isWeather">
+					<div class="weather-main_top">
+						<div class="weather-main_icon"><component :is="parsedIconName(weather.weather[0].icon)"/></div>
+						<div class="weather-main_value">{{weather.main.temp | toInt}}°</div>
+					</div>
+					<div class="weather-main_description">{{weather.weather[0].description}}</div>
+				</template>
+				<template v-else>
+					<div class="weather-main_description mt30">{{model.name}}<span v-if="model.val && model.val !== '_._' && toFloat(model.val) !== '0.0'">: {{toFloat(model.val)}}</span></div>
+					<maskedInput :obj="model" />
+				</template>
 			</div>
 		</div>
 		<div class="weather-additional-data">
@@ -22,7 +26,7 @@
 
 <script>
 	import {mapGetters} from 'vuex'
-	import InputForm from '../modules/input.vue'
+	import maskedInput from '../modules/masked-input.vue'
 
 	// icons
 	import iconClear from '../assets/img/weatherIcons/sun.svg'
@@ -39,13 +43,11 @@
 			iconClouds,
 			iconRain,
 			iconThunderstorm,
-			InputForm
+			maskedInput
 		},
 		data() {
 			return {
-				value: 19,
-				description: 'Солнечно',
-				icon: 'icon-thunderstorm',
+				showWeather: true,
 				model: {
 					name: 'Объём двигателя',
 					val: null
@@ -105,6 +107,9 @@
 			},
 			additionalData() {
 				return this.getAdditionalData()
+			},
+			isWeather() {
+				return this.$store.state.isWeather
 			}
 		},
 	}

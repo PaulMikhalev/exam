@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="temperature">
-			<span class="temperature_text">°</span>
+			<span class="temperature_text" @click="toggleWeather()">°</span>
 			<div class="temperature_box">
 				<label :key="units.value" :class="['temperature_item', {'_selected': appState.units === units.value}]" v-for="units in temperatures">
 					<span class="temperature_name">{{units.shortName}}</span>
@@ -89,6 +89,9 @@
 
 						this.city.name = this.getCityName()
 					});
+			},
+			toggleWeather() {
+				this.$store.state.isWeather = !this.$store.state.isWeather
 			}
 		},
 		computed: {
